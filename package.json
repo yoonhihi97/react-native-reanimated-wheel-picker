@@ -41,7 +41,14 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "wheel-picker",
+    "picker",
+    "reanimated",
+    "gesture-handler",
+    "compound-component",
+    "time-picker",
+    "date-picker"
   ],
   "repository": {
     "type": "git",
@@ -74,11 +81,23 @@
     "react": "19.1.0",
     "react-native": "0.81.5",
     "react-native-builder-bob": "^0.40.17",
+    "react-native-gesture-handler": "^2.26.0",
+    "react-native-reanimated": "^3.17.5",
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0",
+    "react-native-gesture-handler": ">=2.0.0",
+    "react-native-reanimated": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native-gesture-handler": {
+      "optional": false
+    },
+    "react-native-reanimated": {
+      "optional": false
+    }
   },
   "workspaces": [
     "example"
