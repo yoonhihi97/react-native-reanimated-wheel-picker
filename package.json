@@ -33,6 +33,7 @@
   ],
   "scripts": {
     "example": "yarn workspace react-native-reanimated-wheel-picker-example",
+    "test": "jest",
     "clean": "del-cli lib",
     "prepare": "bob build",
     "typecheck": "tsc",
@@ -70,12 +71,17 @@
     "@eslint/js": "^9.35.0",
     "@react-native/babel-preset": "0.83.0",
     "@react-native/eslint-config": "0.83.0",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "^19.1.12",
+    "@types/react-test-renderer": "^19",
     "commitlint": "^19.8.1",
     "del-cli": "^6.0.0",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.2.0",
     "lefthook": "^2.0.3",
     "prettier": "^2.8.8",
     "react": "19.1.0",
@@ -83,6 +89,7 @@
     "react-native-builder-bob": "^0.40.17",
     "react-native-gesture-handler": "^2.26.0",
     "react-native-reanimated": "^3.17.5",
+    "react-test-renderer": "19.1.0",
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
