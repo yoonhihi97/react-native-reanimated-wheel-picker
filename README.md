@@ -230,13 +230,6 @@ function CustomItem() {
 }
 ```
 
-## Contributing
-
-Contributions are welcome! Please read our contributing guidelines before submitting a PR.
-
-- [Development workflow](CONTRIBUTING.md#development-workflow)
-- [Sending a pull request](CONTRIBUTING.md#sending-a-pull-request)
-
 ## License
 
 MIT
