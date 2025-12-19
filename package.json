@@ -88,7 +88,8 @@
     "react-native": "0.81.5",
     "react-native-builder-bob": "^0.40.17",
     "react-native-gesture-handler": "^2.26.0",
-    "react-native-reanimated": "^3.17.5",
+    "react-native-reanimated": "^4.0.0",
+    "react-native-worklets": "^0.7.0",
     "react-test-renderer": "19.1.0",
     "typescript": "^5.9.2"
   },
@@ -96,13 +97,17 @@
     "react": ">=18.0.0",
     "react-native": ">=0.70.0",
     "react-native-gesture-handler": ">=2.0.0",
-    "react-native-reanimated": ">=3.0.0"
+    "react-native-reanimated": ">=4.0.0",
+    "react-native-worklets": ">=0.7.0"
   },
   "peerDependenciesMeta": {
     "react-native-gesture-handler": {
       "optional": false
     },
     "react-native-reanimated": {
+      "optional": false
+    },
+    "react-native-worklets": {
       "optional": false
     }
   },
