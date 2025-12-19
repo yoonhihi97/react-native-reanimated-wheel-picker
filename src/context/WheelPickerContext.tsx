@@ -2,6 +2,8 @@ import { createContext, useContext } from 'react';
 import type { MutableRefObject } from 'react';
 import type { SharedValue } from 'react-native-reanimated';
 
+import type { WheelPickerGroupContextValue } from './WheelPickerGroupContext';
+
 /**
  * Animation context - contains SharedValues that don't trigger re-renders
  * Used by WheelPickerItem for animations
@@ -28,7 +30,9 @@ export interface WheelPickerControlContextValue {
   isInternalChangeRef: MutableRefObject<boolean>;
   itemHeight: number;
   centerY: number;
+  visibleItems: number;
   isReady: boolean;
+  group: WheelPickerGroupContextValue | null;
 }
 
 export const WheelPickerAnimationContext =

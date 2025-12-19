@@ -21,29 +21,31 @@ export default function App() {
         {hour}:{minute}
       </Text>
 
-      <View style={styles.pickerContainer}>
-        <WheelPicker.Root
-          data={hours}
-          value={hour}
-          onValueChange={setHour}
-          style={styles.picker}
-        >
-          <WheelPicker.Indicator />
-          <WheelPicker.Viewport />
-        </WheelPicker.Root>
+      <WheelPicker.Group>
+        <View style={styles.pickerContainer}>
+          <WheelPicker.Root
+            data={hours}
+            value={hour}
+            onValueChange={setHour}
+            style={styles.picker}
+          >
+            <WheelPicker.Indicator />
+            <WheelPicker.Viewport />
+          </WheelPicker.Root>
 
-        <Text style={styles.colon}>:</Text>
+          <Text style={styles.colon}>:</Text>
 
-        <WheelPicker.Root
-          data={minutes}
-          value={minute}
-          onValueChange={setMinute}
-          style={styles.picker}
-        >
-          <WheelPicker.Indicator />
-          <WheelPicker.Viewport />
-        </WheelPicker.Root>
-      </View>
+          <WheelPicker.Root
+            data={minutes}
+            value={minute}
+            onValueChange={setMinute}
+            style={styles.picker}
+          >
+            <WheelPicker.Indicator />
+            <WheelPicker.Viewport />
+          </WheelPicker.Root>
+        </View>
+      </WheelPicker.Group>
     </GestureHandlerRootView>
   );
 }
