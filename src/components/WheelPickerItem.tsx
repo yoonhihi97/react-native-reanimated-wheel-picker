@@ -79,6 +79,7 @@ export const WheelPickerItemInternal = memo(function WheelPickerItemInternal({
 
   return (
     <Animated.View
+      testID={`wheel-picker-item-${label}`}
       collapsable={false}
       style={[styles.item, { height: itemHeight }, animatedStyle]}
     >
