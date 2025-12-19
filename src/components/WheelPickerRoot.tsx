@@ -8,6 +8,12 @@ import {
 
 import { DEFAULT_ITEM_HEIGHT, DEFAULT_VISIBLE_ITEMS } from '../constants';
 import {
+  validateData,
+  validateItemHeight,
+  validateValue,
+  validateVisibleItems,
+} from '../validation';
+import {
   useWheelPickerGroup,
   WheelPickerAnimationContext,
   type WheelPickerAnimationContextValue,
@@ -49,11 +55,18 @@ function WheelPickerRootInner({
   data,
   value,
   onValueChange,
-  itemHeight = DEFAULT_ITEM_HEIGHT,
-  visibleItems = DEFAULT_VISIBLE_ITEMS,
+  itemHeight: itemHeightProp = DEFAULT_ITEM_HEIGHT,
+  visibleItems: visibleItemsProp = DEFAULT_VISIBLE_ITEMS,
   style,
   children,
+  accessibilityLabel,
 }: WheelPickerRootProps) {
+  // Validate props
+  const isValidData = validateData(data);
+  const itemHeight = validateItemHeight(itemHeightProp);
+  const visibleItems = validateVisibleItems(visibleItemsProp);
+  validateValue(data, value);
+
   const isReady = useWheelPickerReady();
   const group = useWheelPickerGroup();
 
@@ -159,11 +172,22 @@ function WheelPickerRootInner({
     ]
   );
 
+  // Early return for empty data (after all hooks to follow Rules of Hooks)
+  if (!isValidData) {
+    return null;
+  }
+
   return (
     <WheelPickerAnimationContext.Provider value={animationContext}>
       <WheelPickerControlContext.Provider value={controlContext}>
         <View
           style={[styles.rootContainer, { height: containerHeight }, style]}
+          accessible={true}
+          accessibilityRole="adjustable"
+          accessibilityLabel={accessibilityLabel}
+          accessibilityValue={{
+            text: value,
+          }}
         >
           {children}
         </View>

@@ -82,6 +82,9 @@ export const WheelPickerItemInternal = memo(function WheelPickerItemInternal({
       testID={`wheel-picker-item-${label}`}
       collapsable={false}
       style={[styles.item, { height: itemHeight }, animatedStyle]}
+      accessible={true}
+      accessibilityRole="text"
+      accessibilityLabel={label}
     >
       <Text style={styles.itemText}>{label}</Text>
     </Animated.View>
@@ -99,6 +102,7 @@ export function WheelPickerItem({
   style,
   textStyle,
   children,
+  accessibilityLabel: accessibilityLabelProp,
 }: WheelPickerItemProps) {
   const { itemHeight } = useWheelPickerAnimation();
   const animatedStyle = useItemAnimatedStyle(indexProp ?? 0);
@@ -118,6 +122,9 @@ export function WheelPickerItem({
     <Animated.View
       collapsable={false}
       style={[styles.item, { height: itemHeight }, animatedStyle, style]}
+      accessible={true}
+      accessibilityRole="text"
+      accessibilityLabel={accessibilityLabelProp ?? value}
     >
       <Text style={[styles.itemText, textStyle]}>{children ?? value}</Text>
     </Animated.View>

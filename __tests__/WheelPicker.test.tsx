@@ -126,6 +126,132 @@ describe('WheelPicker', () => {
     });
   });
 
+  describe('Validation', () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+    afterEach(() => {
+      consoleWarnSpy.mockClear();
+    });
+
+    afterAll(() => {
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('returns null and warns when data is empty', () => {
+      const { toJSON } = render(
+        <WheelPicker.Root data={[]} value="" onValueChange={mockOnValueChange}>
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(toJSON()).toBeNull();
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('data prop is empty')
+      );
+    });
+
+    it('warns when value is not in data array', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="99"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('value "99" not found in data array')
+      );
+    });
+
+    it('warns and adjusts when visibleItems is even', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="00"
+          onValueChange={mockOnValueChange}
+          visibleItems={4}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('visibleItems should be odd')
+      );
+    });
+
+    it('warns and uses default when itemHeight is zero or negative', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="00"
+          onValueChange={mockOnValueChange}
+          itemHeight={0}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('itemHeight must be positive')
+      );
+    });
+
+    it('warns and uses default when visibleItems is zero or negative', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="00"
+          onValueChange={mockOnValueChange}
+          visibleItems={0}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('visibleItems must be positive')
+      );
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('applies accessibilityRole adjustable to Root', () => {
+      const { getByRole } = render(
+        <WheelPicker.Root
+          data={mockData}
+          value="02"
+          onValueChange={mockOnValueChange}
+          accessibilityLabel="Hour picker"
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      const picker = getByRole('adjustable');
+      expect(picker).toBeTruthy();
+      expect(picker.props.accessibilityLabel).toBe('Hour picker');
+      expect(picker.props.accessibilityValue).toEqual({ text: '02' });
+    });
+
+    it('applies accessibilityLabel to items', () => {
+      const { getByLabelText } = render(
+        <WheelPicker.Root
+          data={mockData}
+          value="02"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(getByLabelText('02')).toBeTruthy();
+    });
+  });
+
   describe('Animation', () => {
     it('renders items with animated styles', () => {
       const { getByTestId } = render(
