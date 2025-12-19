@@ -1,5 +1,5 @@
 {
-  "name": "react-native-reanimated-wheel-picker",
+  "name": "smooth-wheel-picker",
   "version": "1.0.0",
   "description": "A performant wheel picker for React Native using Reanimated",
   "main": "./lib/module/index.js",
