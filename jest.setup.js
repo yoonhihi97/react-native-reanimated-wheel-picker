@@ -1,19 +1,10 @@
 /* eslint-disable no-undef */
 import '@testing-library/jest-native/extend-expect';
 
-// Mock react-native-worklets (must be before reanimated import)
-jest.mock('react-native-worklets', () => ({
-  scheduleOnRN: (fn, ...args) => fn(...args),
-  scheduleOnUI: jest.fn((fn) => fn),
-  createSerializable: jest.fn((value) => value),
-  useWorklet: jest.fn((fn) => fn),
-  runOnRN: jest.fn((fn, ...args) => fn(...args)),
-  isWorkletFunction: jest.fn(() => true),
-  RuntimeKind: { UI: 'UI', RN: 'RN' },
-  serializableMappingCache: new Map(),
-  makeShareable: jest.fn((value) => value),
-  makeShareableCloneRecursive: jest.fn((value) => value),
-}));
+// 공식 worklets mock 사용 (must be before reanimated import)
+jest.mock('react-native-worklets', () =>
+  require('react-native-worklets/lib/module/mock')
+);
 
 // Setup react-native-reanimated mocks
 require('react-native-reanimated').setUpTests();
