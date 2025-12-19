@@ -112,7 +112,9 @@ Custom item component (use when you need custom rendering).
 
 ## Examples
 
-### Time Picker
+### Time Picker with Group
+
+When using multiple pickers together, wrap them with `WheelPicker.Group` for better performance:
 
 ```tsx
 import { useState } from 'react';
@@ -131,29 +133,31 @@ function TimePicker() {
   const [minute, setMinute] = useState('00');
 
   return (
-    <View style={styles.container}>
-      <WheelPicker.Root
-        data={hours}
-        value={hour}
-        onValueChange={setHour}
-        style={styles.picker}
-      >
-        <WheelPicker.Indicator />
-        <WheelPicker.Viewport />
-      </WheelPicker.Root>
+    <WheelPicker.Group>
+      <View style={styles.container}>
+        <WheelPicker.Root
+          data={hours}
+          value={hour}
+          onValueChange={setHour}
+          style={styles.picker}
+        >
+          <WheelPicker.Indicator />
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
 
-      <Text style={styles.colon}>:</Text>
+        <Text style={styles.colon}>:</Text>
 
-      <WheelPicker.Root
-        data={minutes}
-        value={minute}
-        onValueChange={setMinute}
-        style={styles.picker}
-      >
-        <WheelPicker.Indicator />
-        <WheelPicker.Viewport />
-      </WheelPicker.Root>
-    </View>
+        <WheelPicker.Root
+          data={minutes}
+          value={minute}
+          onValueChange={setMinute}
+          style={styles.picker}
+        >
+          <WheelPicker.Indicator />
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      </View>
+    </WheelPicker.Group>
   );
 }
 
@@ -205,12 +209,21 @@ const styles = StyleSheet.create({
 </WheelPicker.Root>
 ```
 
+### WheelPicker.Group
+
+Optional wrapper for grouping multiple pickers together. Improves performance by cancelling animations on other pickers when one is touched.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | **required** | WheelPicker.Root components |
+
 ## Performance Tips
 
 1. **Wrap your app** with `GestureHandlerRootView` at the root level
-2. **Use memo** for parent components to prevent unnecessary re-renders
-3. **Stable callbacks** - Use `useCallback` for `onValueChange`
-4. The library uses **context splitting** internally to minimize re-renders
+2. **Use `WheelPicker.Group`** when using 2+ pickers together - this prevents animation conflicts when switching between pickers rapidly
+3. **Use memo** for parent components to prevent unnecessary re-renders
+4. **Stable callbacks** - Use `useCallback` for `onValueChange`
+5. The library uses **context splitting** internally to minimize re-renders
 
 ## Advanced Usage
 
