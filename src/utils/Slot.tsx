@@ -90,7 +90,7 @@ Slot.displayName = 'Slot';
  */
 export interface AnimatedSlotProps {
   children?: ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   style?: any; // Accept animated styles
   collapsable?: boolean;
 }

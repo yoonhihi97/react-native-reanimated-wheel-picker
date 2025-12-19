@@ -25,9 +25,9 @@ describe('WheelPicker', () => {
         </WheelPicker.Root>
       );
 
-      // Should render all items
-      expect(screen.getByText('00')).toBeTruthy();
-      expect(screen.getByText('02')).toBeTruthy();
+      // Should render items (virtualization may render duplicates for infinite scroll)
+      expect(screen.getAllByText('00').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('02').length).toBeGreaterThan(0);
     });
 
     it('renders with custom itemHeight and visibleItems', () => {
@@ -107,8 +107,9 @@ describe('WheelPicker', () => {
         </WheelPicker.Root>
       );
 
+      // Virtualization may render duplicates for infinite scroll
       mockData.forEach((item) => {
-        expect(screen.getByText(item)).toBeTruthy();
+        expect(screen.getAllByText(item).length).toBeGreaterThan(0);
       });
     });
   });

@@ -1,9 +1,9 @@
 import { View, type ViewStyle } from 'react-native';
 
-import { useWheelPickerAnimation } from './context/WheelPickerContext';
-import { Slot } from './Slot';
-import { styles } from './styles';
-import type { WheelPickerIndicatorProps } from './types';
+import { useWheelPickerAnimation } from '../context';
+import { styles } from '../styles';
+import type { WheelPickerIndicatorProps } from '../types';
+import { Slot } from '../utils';
 
 /**
  * Indicator component that shows the selection highlight area.

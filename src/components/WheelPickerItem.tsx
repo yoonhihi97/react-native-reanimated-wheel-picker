@@ -2,13 +2,13 @@ import { memo } from 'react';
 import { Text } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
-import { useWheelPickerAnimation } from './context/WheelPickerContext';
-import { AnimatedSlot } from './Slot';
-import { styles } from './styles';
+import { useWheelPickerAnimation } from '../context';
+import { styles } from '../styles';
 import type {
   WheelPickerItemProps,
   WheelPickerItemInternalProps,
-} from './types';
+} from '../types';
+import { AnimatedSlot } from '../utils';
 
 /**
  * Hook to create animated style for wheel picker items.
@@ -16,41 +16,52 @@ import type {
  * Optimized: uses direct math instead of interpolate() for 3D effects.
  */
 function useItemAnimatedStyle(index: number) {
-  const { scrollY, itemHeight, centerY, cycleHeight, containerHeight } =
-    useWheelPickerAnimation();
+  // Extract primitive values to avoid capturing entire context object in worklet
+  const ctx = useWheelPickerAnimation();
+  const scrollYSV = ctx.scrollY;
+  const itemHeightVal = ctx.itemHeight;
+  const centerYVal = ctx.centerY;
+  const cycleHeightVal = ctx.cycleHeight;
+  const containerHeightVal = ctx.containerHeight;
 
-  const baseY = index * itemHeight;
-  const maxDistance = itemHeight * 2;
+  // Pre-calculate constants outside worklet
+  const baseY = index * itemHeightVal;
+  const maxDistance = itemHeightVal * 2;
 
   return useAnimatedStyle(() => {
     'worklet';
     // Calculate position with scroll offset
-    let y = baseY + scrollY.value;
+    const rawY = baseY + scrollYSV.value;
 
-    // Infinite loop using modulo
-    y = ((y % cycleHeight) + cycleHeight) % cycleHeight;
+    // Optimized modulo for infinite loop (single operation when possible)
+    let y = rawY % cycleHeightVal;
+    if (y < 0) y += cycleHeightVal;
 
     // Adjust for items beyond container
-    if (y > containerHeight) {
-      y -= cycleHeight;
+    if (y > containerHeightVal) {
+      y -= cycleHeightVal;
     }
 
-    // Calculate distance from center and direction
-    const distance = Math.abs(y - centerY);
+    // Early exit for items far outside visible area
+    if (y < -itemHeightVal || y > containerHeightVal + itemHeightVal) {
+      return {
+        transform: [{ translateY: y }, { scale: 0.8 }],
+        opacity: 0,
+      };
+    }
+
+    // Calculate distance from center
+    const distance = y - centerYVal;
+    const absDistance = distance < 0 ? -distance : distance;
 
     // Normalized distance [0, 1] for interpolation
-    const t = Math.min(distance / maxDistance, 1);
+    const t = absDistance > maxDistance ? 1 : absDistance / maxDistance;
 
-    // Direct math instead of interpolate() for better performance
-    // opacity: 1 → 0.3 (fade out distant items)
-    const opacity = 1 - t * 0.7;
-
-    // scale: 1 → 0.8 (shrink distant items for depth effect)
-    const scale = 1 - t * 0.2;
-
+    // Direct math for opacity and scale
+    // opacity: 1 → 0.3, scale: 1 → 0.8
     return {
-      transform: [{ translateY: y }, { scale }],
-      opacity,
+      transform: [{ translateY: y }, { scale: 1 - t * 0.2 }],
+      opacity: 1 - t * 0.7,
     };
   });
 }
@@ -69,7 +80,6 @@ export const WheelPickerItemInternal = memo(function WheelPickerItemInternal({
   return (
     <Animated.View
       collapsable={false}
-      // @ts-expect-error - animated style array type complexity
       style={[styles.item, { height: itemHeight }, animatedStyle]}
     >
       <Text style={styles.itemText}>{label}</Text>
