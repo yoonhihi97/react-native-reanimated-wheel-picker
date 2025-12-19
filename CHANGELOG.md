@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/yoonhihi97/react-native-reanimated-wheel-picker/compare/v1.0.0...v1.0.1) (2025-12-19)
+
+
+### Bug Fixes
+
+* npm 패키지 이름을 smooth-wheel-picker로 변경 ([082c24a](https://github.com/yoonhihi97/react-native-reanimated-wheel-picker/commit/082c24ae9e3b69ce07e61831ed46d23bc06ba5f5))
+
 # 1.0.0 (2025-12-19)
 
 
