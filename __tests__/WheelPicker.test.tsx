@@ -10,6 +10,11 @@ describe('WheelPicker', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('WheelPicker.Root', () => {
@@ -118,6 +123,81 @@ describe('WheelPicker', () => {
     it('exports default values', () => {
       expect(DEFAULT_ITEM_HEIGHT).toBe(40);
       expect(DEFAULT_VISIBLE_ITEMS).toBe(5);
+    });
+  });
+
+  describe('Animation', () => {
+    it('renders items with animated styles', () => {
+      const { getByTestId } = render(
+        <WheelPicker.Root
+          data={mockData}
+          value="02"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Indicator />
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      // 선택된 아이템이 렌더링되는지 확인
+      const selectedItem = getByTestId('wheel-picker-item-02');
+      expect(selectedItem).toBeTruthy();
+
+      // 애니메이션 스타일(transform, opacity)이 적용되는지 확인
+      expect(selectedItem).toHaveAnimatedStyle({
+        opacity: 1,
+        transform: [{ translateY: 80 }, { scale: 1 }],
+      });
+    });
+
+    it('applies correct opacity to selected item', () => {
+      const { getByTestId } = render(
+        <WheelPicker.Root
+          data={mockData}
+          value="02"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      jest.advanceTimersByTime(300);
+
+      const selectedItem = getByTestId('wheel-picker-item-02');
+      // 중앙에 위치한 아이템은 opacity가 1에 가까워야 함
+      expect(selectedItem).toHaveAnimatedStyle({
+        opacity: 1,
+      });
+    });
+
+    it('updates animation when value changes', () => {
+      const { rerender, getByTestId } = render(
+        <WheelPicker.Root
+          data={mockData}
+          value="00"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      rerender(
+        <WheelPicker.Root
+          data={mockData}
+          value="02"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      // spring 애니메이션 완료 대기
+      jest.advanceTimersByTime(500);
+
+      const item = getByTestId('wheel-picker-item-02');
+      expect(item).toHaveAnimatedStyle({
+        opacity: 1,
+      });
     });
   });
 });
