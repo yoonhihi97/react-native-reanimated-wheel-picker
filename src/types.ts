@@ -18,6 +18,8 @@ export interface WheelPickerRootProps {
   style?: ViewStyle;
   /** Children components (Indicator, Viewport, etc.) */
   children: React.ReactNode;
+  /** Accessibility label for the picker */
+  accessibilityLabel?: string;
 }
 
 /**
@@ -60,6 +62,8 @@ export interface WheelPickerItemProps {
   textStyle?: TextStyle;
   /** Children to render (text content or custom component with asChild) */
   children?: React.ReactNode;
+  /** Accessibility label for this item */
+  accessibilityLabel?: string;
 }
 
 /**

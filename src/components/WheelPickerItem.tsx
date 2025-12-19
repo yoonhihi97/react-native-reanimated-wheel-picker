@@ -99,6 +99,7 @@ export function WheelPickerItem({
   style,
   textStyle,
   children,
+  accessibilityLabel: accessibilityLabelProp,
 }: WheelPickerItemProps) {
   const { itemHeight } = useWheelPickerAnimation();
   const animatedStyle = useItemAnimatedStyle(indexProp ?? 0);
@@ -116,6 +117,9 @@ export function WheelPickerItem({
 
   return (
     <Animated.View
+      accessible={true}
+      accessibilityRole="text"
+      accessibilityLabel={accessibilityLabelProp ?? value}
       collapsable={false}
       style={[styles.item, { height: itemHeight }, animatedStyle, style]}
     >

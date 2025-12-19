@@ -17,6 +17,12 @@ import {
 import { useWheelPickerReady } from '../hooks';
 import { styles } from '../styles';
 import type { WheelPickerRootProps } from '../types';
+import {
+  validateData,
+  validateValue,
+  validateVisibleItems,
+  validateItemHeight,
+} from '../validation';
 
 // ============================================================================
 // Utility Functions
@@ -49,16 +55,23 @@ function WheelPickerRootInner({
   data,
   value,
   onValueChange,
-  itemHeight = DEFAULT_ITEM_HEIGHT,
-  visibleItems = DEFAULT_VISIBLE_ITEMS,
+  itemHeight: itemHeightProp = DEFAULT_ITEM_HEIGHT,
+  visibleItems: visibleItemsProp = DEFAULT_VISIBLE_ITEMS,
   style,
   children,
+  accessibilityLabel,
 }: WheelPickerRootProps) {
+  // Validate props (must be called before hooks for consistent hook order)
+  const isValidData = validateData(data);
+  const itemHeight = validateItemHeight(itemHeightProp);
+  const visibleItems = validateVisibleItems(visibleItemsProp);
+  validateValue(data, value);
+
   const isReady = useWheelPickerReady();
   const group = useWheelPickerGroup();
 
-  // Derived measurements
-  const dataLength = data.length;
+  // Derived measurements (use defaults for invalid data to keep hooks stable)
+  const dataLength = isValidData ? data.length : 1;
   const containerHeight = itemHeight * visibleItems;
   const centerY = containerHeight / 2 - itemHeight / 2;
   const cycleHeight = dataLength * itemHeight;
@@ -66,7 +79,7 @@ function WheelPickerRootInner({
   // Calculate initial scroll position (only once on mount)
   const initialIndexRef = useRef<number | null>(null);
   if (initialIndexRef.current === null) {
-    const idx = data.findIndex((item) => item === value);
+    const idx = isValidData ? data.findIndex((item) => item === value) : 0;
     initialIndexRef.current = idx === -1 ? 0 : idx;
   }
 
@@ -95,6 +108,8 @@ function WheelPickerRootInner({
 
   // Sync scroll position with value prop (for external changes)
   useLayoutEffect(() => {
+    if (!isValidData) return;
+
     const targetIndex = findIndexInData(data, value);
     const targetScrollY = calculateScrollY(centerY, targetIndex, itemHeight);
 
@@ -111,7 +126,16 @@ function WheelPickerRootInner({
       scrollY.value = withSpring(targetScrollY, SPRING_CONFIG);
       currentIdx.value = targetIndex;
     }
-  }, [value, data, itemHeight, centerY, scrollY, startY, currentIdx]);
+  }, [
+    value,
+    data,
+    itemHeight,
+    centerY,
+    scrollY,
+    startY,
+    currentIdx,
+    isValidData,
+  ]);
 
   // Animation context - stable, only changes when layout props change
   // Items subscribe to this - won't re-render when value changes
@@ -159,10 +183,19 @@ function WheelPickerRootInner({
     ]
   );
 
+  // Early return for empty data (after all hooks)
+  if (!isValidData) {
+    return null;
+  }
+
   return (
     <WheelPickerAnimationContext.Provider value={animationContext}>
       <WheelPickerControlContext.Provider value={controlContext}>
         <View
+          accessible={true}
+          accessibilityRole="adjustable"
+          accessibilityLabel={accessibilityLabel}
+          accessibilityValue={{ text: value }}
           style={[styles.rootContainer, { height: containerHeight }, style]}
         >
           {children}

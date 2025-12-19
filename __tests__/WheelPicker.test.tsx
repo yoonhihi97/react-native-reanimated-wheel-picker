@@ -7,14 +7,17 @@ import { DEFAULT_ITEM_HEIGHT, DEFAULT_VISIBLE_ITEMS } from '../src/constants';
 describe('WheelPicker', () => {
   const mockData = ['00', '01', '02', '03', '04'];
   const mockOnValueChange = jest.fn();
+  const originalConsoleWarn = console.warn;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+    console.warn = jest.fn();
   });
 
   afterEach(() => {
     jest.useRealTimers();
+    console.warn = originalConsoleWarn;
   });
 
   describe('WheelPicker.Root', () => {
@@ -123,6 +126,123 @@ describe('WheelPicker', () => {
     it('exports default values', () => {
       expect(DEFAULT_ITEM_HEIGHT).toBe(40);
       expect(DEFAULT_VISIBLE_ITEMS).toBe(5);
+    });
+  });
+
+  describe('Validation', () => {
+    it('returns null and warns when data is empty', () => {
+      const { toJSON } = render(
+        <WheelPicker.Root data={[]} value="" onValueChange={mockOnValueChange}>
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(toJSON()).toBeNull();
+      expect(console.warn).toHaveBeenCalledWith(
+        '[WheelPicker] data prop is empty. WheelPicker will not render.'
+      );
+    });
+
+    it('warns when value is not in data', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="invalid"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(console.warn).toHaveBeenCalledWith(
+        '[WheelPicker] value "invalid" not found in data. Defaulting to first item.'
+      );
+    });
+
+    it('corrects even visibleItems to odd', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="00"
+          onValueChange={mockOnValueChange}
+          visibleItems={4}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(console.warn).toHaveBeenCalledWith(
+        '[WheelPicker] visibleItems must be odd for center alignment. Received: 4. Using: 5.'
+      );
+    });
+
+    it('corrects invalid itemHeight', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="00"
+          onValueChange={mockOnValueChange}
+          itemHeight={0}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(console.warn).toHaveBeenCalledWith(
+        '[WheelPicker] itemHeight must be positive. Received: 0. Defaulting to 40.'
+      );
+    });
+
+    it('corrects negative visibleItems', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="00"
+          onValueChange={mockOnValueChange}
+          visibleItems={-1}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      expect(console.warn).toHaveBeenCalledWith(
+        '[WheelPicker] visibleItems must be at least 1. Received: -1. Defaulting to 5.'
+      );
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('has correct accessibility role on Root', () => {
+      render(
+        <WheelPicker.Root
+          data={mockData}
+          value="02"
+          onValueChange={mockOnValueChange}
+          accessibilityLabel="Select hour"
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      const picker = screen.getByRole('adjustable');
+      expect(picker).toBeTruthy();
+      expect(picker.props.accessibilityLabel).toBe('Select hour');
+      expect(picker.props.accessibilityValue).toEqual({ text: '02' });
+    });
+
+    it('renders items with accessibility props', () => {
+      const { getByTestId } = render(
+        <WheelPicker.Root
+          data={mockData}
+          value="02"
+          onValueChange={mockOnValueChange}
+        >
+          <WheelPicker.Viewport />
+        </WheelPicker.Root>
+      );
+
+      const item = getByTestId('wheel-picker-item-02');
+      expect(item).toBeTruthy();
     });
   });
 
